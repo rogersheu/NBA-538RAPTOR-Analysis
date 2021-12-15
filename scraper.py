@@ -1,3 +1,8 @@
+from bs4 import BeautifulSoup
+import pandas as pd
+import requests
+
+
 # Have: RAPTOR of current season
 # To do:
 #   Automate grabbing the main table in https://projects.fivethirtyeight.com/nba-player-ratings/
@@ -15,7 +20,7 @@ def active_scraper():
 
 
 def main():
-    pass
+    active_scraper()
 
 if __name__ == "__main__":
     main()
