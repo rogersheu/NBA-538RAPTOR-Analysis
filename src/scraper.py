@@ -30,10 +30,6 @@ make_dir_if_nonexistent(mkdir)
 # 14: RAPTOR WAR
 player_regex = re.compile(r"[0-9]+ ([a-zA-Z-'.]+ [a-zA-Z-'. ]+)(?:'21-'22) ([a-zA-Z0-9\s]+) ((?:(?:, ){0,1}(?:PG|SG|SF|PF|C))+) ([0-9,]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+)")
 
-# Searches for capture groups 5-14, inclusive
-number_regex = re.compile(r"( [+-]*[0-9]+.[0-9]+)")
-
-
 def preseason_scraper():
     pass
 
