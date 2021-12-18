@@ -46,7 +46,6 @@ def active_scraper():
     dataTable = driver.find_elements(By.XPATH, '/html/body/div[3]/table/tbody')
 
     dataList = []
-    finalTable = []
 
     for item in dataTable:
         dataList.append(item.text.split('\n'))
