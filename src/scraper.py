@@ -1,12 +1,10 @@
-from bs4 import BeautifulSoup
 import pandas as pd
-import requests
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from transfer_data import *
 from datetime import datetime
 from csv_functions import make_dir_if_nonexistent, reset_csv, write_to_csv
+import re
 
 
 # Have: RAPTOR of current season
@@ -22,7 +20,18 @@ shortDate_nodash = shortDate.replace("-","")
 mkdir = ("C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data")
 make_dir_if_nonexistent(mkdir)
 
+# Capture Group 1: Name
+# Capture Group 2: Team
+# Capture Group 3: Position(s)
+# 4: MP
+# 5-7: BOX RAPTOR
+# 8-10: ON/OFF RAPTOR
+# 11-13: RAPTOR
+# 14: RAPTOR WAR
+player_regex = re.compile(r"[0-9]+ ([a-zA-Z-'.]+ [a-zA-Z-'. ]+)(?:'21-'22) ([a-zA-Z0-9\s]+) ((?:(?:, ){0,1}(?:PG|SG|SF|PF|C))+) ([0-9,]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+)")
 
+# Searches for capture groups 5-14, inclusive
+number_regex = re.compile(r"( [+-]*[0-9]+.[0-9]+)")
 
 
 def preseason_scraper():
@@ -32,31 +41,33 @@ def preseason_scraper():
 
 def active_scraper():
     fileName = (f"{mkdir}/RAPTORdata_{shortDate}.csv")
+    reset_csv(fileName)
+    write_to_csv(fileName, ['Name','Team','Position(s)','MP','Box Offense','Box Defense','Box Total','OnOff Offense','OnOff Defense','OnOff Total','RAPTOR Offense','RAPTOR Defense','RAPTOR Total','RAPTOR WAR'])
 
     driver = webdriver.Chrome(executable_path = 'C:/Users/Roger/Documents/env/chromedriver_win32/chromedriver.exe')
     driver.get("https://projects.fivethirtyeight.com/nba-player-ratings/")
 
     dataTable = driver.find_elements(By.XPATH, '/html/body/div[3]/table/tbody')
 
+    dataList = []
+    finalTable = []
+
     for item in dataTable:
-        print(item.text)
-        #write_to_csv(fileName, df)
+        dataList.append(item.text.split('\n'))
+
+    dataList = dataList[0]
+
+    for player in dataList:
+        print(player)
+        playerMatch = re.match(player_regex, player)
+        name, team, position, MP = playerMatch.group(1, 2, 3, 4)
+        boxOFF, boxDEF, boxTOT = playerMatch.group(5, 6, 7)
+        onoffOFF, onoffDEF, onoffTOT = playerMatch.group(8, 9, 10)
+        raptorOFF, raptorDEF, raptorTOT = playerMatch.group(11, 12, 13)
+        war = playerMatch.group(14)
+        write_to_csv(fileName, [name, team, position, MP, boxOFF, boxDEF, boxTOT, onoffOFF, onoffDEF, onoffTOT, raptorOFF, raptorDEF, raptorTOT, war])
     
-
-
-
-    driver.close()
-
-
-    # raptorPage = requests.get('https://projects.fivethirtyeight.com/nba-player-ratings/')
-    # raptorSoup = BeautifulSoup(raptorPage.content, "html.parser", from_encoding="utf-8")
-    # raptorTable = raptorSoup.find('div', class_ = 'container').find('table')
-    
-    # print(raptorTable)
-    # raptorCols = raptorTable.find_all("td")
-
-
-    
+    driver.close()    
 
 def main():
     active_scraper()
