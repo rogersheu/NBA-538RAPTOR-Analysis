@@ -31,7 +31,7 @@ make_dir_if_nonexistent(mkdir)
 # 14: RAPTOR WAR
 player_regex = re.compile(r"[0-9]*\s*([a-zA-Z-'.]+ [a-zA-Z-'. ]+)(?:'21-'22) ([a-zA-Z0-9\s]+) ((?:(?:, ){0,1}(?:PG|SG|SF|PF|C))+) ([0-9,]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+)")
 
-def preseason_scraper():
+def preseasonpredictions_scraper():
     pass
 
 
@@ -61,6 +61,8 @@ def active_scraper():
     nameforSort = driver.find_element(By.XPATH, "/html/body/div[3]/table/thead/tr[2]/th[2]")
     actions.click(nameforSort)
     actions.perform()
+
+    # Picks the data table (finally). Unfortunately, contents are a huge mess, lines delimited by \n, fields delimited by space
     dataTable = driver.find_elements(By.XPATH, '/html/body/div[3]/table/tbody')
 
     dataList = []
@@ -68,10 +70,10 @@ def active_scraper():
     for item in dataTable:
         dataList.append(item.text.split('\n'))
 
+    # Oddly enough, it's a list of length 1 inside a list
     dataList = dataList[0]
 
     for player in dataList:
-        print(player)
         playerMatch = re.match(player_regex, player)
         name, team, position, MP = playerMatch.group(1, 2, 3, 4)
         boxOFF, boxDEF, boxTOT = playerMatch.group(5, 6, 7)
