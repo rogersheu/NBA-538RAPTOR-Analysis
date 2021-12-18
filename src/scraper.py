@@ -1,6 +1,7 @@
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
 from transfer_data import *
 from datetime import datetime
 from csv_functions import make_dir_if_nonexistent, reset_csv, write_to_csv
@@ -43,6 +44,23 @@ def active_scraper():
     driver = webdriver.Chrome(executable_path = 'C:/Users/Roger/Documents/env/chromedriver_win32/chromedriver.exe')
     driver.get("https://projects.fivethirtyeight.com/nba-player-ratings/")
 
+    # Minutes slider
+    slider = driver.find_element(By.XPATH, "/html/body/div[3]/div[3]/div/div[1]/div[3]/div[4]/input")
+    
+    # Targets the "Season Type" drop-down menu to the left of the minutes slider
+    targetDestination = driver.find_element(By.XPATH, "/html/body/div[3]/div[3]/div/div[1]/div[2]/form/select")
+
+    # Adjust slider to minimum of 1 minute
+    actions = ActionChains(driver)
+    actions.click_and_hold(slider)
+    actions.move_to_element(targetDestination)
+    actions.release()
+    actions.perform()
+
+    # Sorts by last name
+    nameforSort = driver.find_element(By.XPATH, "/html/body/div[3]/table/thead/tr[2]/th[2]")
+    actions.click(nameforSort)
+    actions.perform()
     dataTable = driver.find_elements(By.XPATH, '/html/body/div[3]/table/tbody')
 
     dataList = []
