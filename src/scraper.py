@@ -29,8 +29,7 @@ make_dir_if_nonexistent(mkdir)
 # 8-10: ON/OFF RAPTOR
 # 11-13: RAPTOR
 # 14: RAPTOR WAR
-player_regex = re.compile(r"[0-9]*\s*([a-zA-Z-'.]+ [a-zA-Z-'. ]+)(?:'21-'22) ([a-zA-Z0-9\s]+) ((?:(?:, ){0,1}(?:PG|SG|SF|PF|C))+) ([0-9,]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+)")
-
+player_regex = re.compile(r"[0-9]*\s*([a-zA-Z-'.]+ [a-zA-Z-']+(?: (?:Jr.|Sr.|II|III|IV){0,1})*)(?:'21-'22) ([a-zA-Z0-9]+|Trail Blazers) ((?:(?:, ){0,1}(?:PG|SG|SF|PF|C))*)\s*([0-9,]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+) ([+-]*[0-9]+.[0-9]+)")
 def preseasonpredictions_scraper():
     pass
 
@@ -74,6 +73,7 @@ def active_scraper():
     dataList = dataList[0]
 
     for player in dataList:
+        print(player)
         playerMatch = re.match(player_regex, player)
         name, team, position, MP = playerMatch.group(1, 2, 3, 4)
         boxOFF, boxDEF, boxTOT = playerMatch.group(5, 6, 7)
