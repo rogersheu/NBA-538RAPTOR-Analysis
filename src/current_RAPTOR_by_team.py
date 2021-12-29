@@ -11,6 +11,30 @@ dir = ("C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/dailyRAPTOR")
 fileName = f'{dir}/RAPTORratings_{shortDate}.csv'
 
 def current_RAPTOR_by_team():
+    reset_csv(fileName)
+    write_to_csv(fileName, ['Name', 'Current Offensive +/-', 'Current Defensive +/-'])
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    driver = webdriver.Chrome(executable_path = 'C:/Users/Roger/Documents/env/chromedriver_win32/chromedriver.exe', options=options)
+    driver.get(f"https://projects.fivethirtyeight.com/2022-nba-predictions/")
+
+    
+    teamList = []
+
+    for i in range(1,31):
+        teamName = driver.find_element(By.XPATH, f"/html/body/article/div[2]/main/div[1]/div/div[1]/table/tbody/tr[{i}]/td[4]/a").text
+        teamList.append(teamName.replace(" ", "-").lower())
+    
+    for team in teamList:
+        driver.get(f"https://projects.fivethirtyeight.com/2022-nba-predictions/{team}")
+        player_count = len(driver.find_elements(By.XPATH, "/html/body/article/div[2]/main/div[3]/div/div[2]/div[2]/table/tbody/tr"))
+        for index in range(1, player_count+1):
+            if driver.find_element(By.XPATH, f"/html/body/article/div[2]/main/div[3]/div/div[2]/div[2]/table/tbody/tr[{index}]").get_attribute("class") == "overall":
+                break
+            name = driver.find_element(By.XPATH, f"/html/body/article/div[2]/main/div[3]/div/div[2]/div[2]/table/tbody/tr[{index}]/td[1]").text.replace("*", "")
+            offensive_rating = driver.find_element(By.XPATH, f"/html/body/article/div[2]/main/div[3]/div/div[2]/div[2]/table/tbody/tr[{index}]/td[9]/div").text
+            defensive_rating = driver.find_element(By.XPATH, f"/html/body/article/div[2]/main/div[3]/div/div[2]/div[2]/table/tbody/tr[{index}]/td[10]/div").text
+            write_to_csv(fileName, [name, offensive_rating, defensive_rating])
 
     sort_by_last_name(fileName)
     combine_with_preseason(fileName)
