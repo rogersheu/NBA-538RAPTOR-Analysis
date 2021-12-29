@@ -11,6 +11,11 @@ dir = ("C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/dailyRAPTOR")
 fileName = f'{dir}/RAPTORratings_{shortDate}.csv'
 
 def current_RAPTOR_by_team():
+
+    sort_by_last_name(fileName)
+    combine_with_preseason(fileName)
+
+#could make argument date if necessary
 def combine_with_preseason():
     dataPath = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data'
     preseason_file = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/RAPTOR_preseason_predictions_2022.csv'
