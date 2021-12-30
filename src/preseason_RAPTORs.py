@@ -9,8 +9,11 @@ fileName = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/RAPTOR_preseason_p
 shortDate = datetime.today().strftime('%Y-%m-%d')
 
 def get_preseason_RAPTOR():
-    #reset_csv(fileName)
-    #write_to_csv(fileName, ['Name', 'Category','Preseason RAPTOR Offensive +/-','Preseason RAPTOR Defensive +/-','Preseason RAPTOR Total +/-','Preseason RAPTOR WAR'])
+    # try:
+    #     reset_csv(fileName)
+    # except FileNotFoundError:
+    #     pass
+    #write_to_csv(fileName, ['Name', 'PreOff','PreDef','PreTot','PreWAR'])
     df = pd.read_csv(f"C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/dailyRAPTOR/RAPTORratings_{shortDate}.csv", engine = 'python')
     playerNames = list(df['Name'])
 
@@ -27,6 +30,7 @@ def get_preseason_RAPTOR():
             except Exception:
                 continue
     
+    sort_by_last_name(fileName)
 
 
 
@@ -41,8 +45,7 @@ def get_player_stats(name):
     defensive_plusminus = driver.find_element(By.XPATH, "/html/body/article/div/div[5]/div[1]/div/div/table[1]/tbody/tr[4]/td[6]").text
     total_plusminus = driver.find_element(By.XPATH, "/html/body/article/div/div[5]/div[1]/div/div/table[1]/tbody/tr[7]/td[6]").text
     WAR = driver.find_element(By.XPATH, "/html/body/article/div/div[5]/div[1]/div/div/table[2]/tbody/tr[1]/td[6]").text
-    category = driver.find_element(By.XPATH, "/html/body/article/div/div[4]/div[2]/div[1]/div[1]/div/div[1]/div[2]/div/span").text
-    write_to_csv(fileName, [name, category, offensive_plusminus, defensive_plusminus, total_plusminus, WAR])
+    write_to_csv(fileName, [name, offensive_plusminus, defensive_plusminus, total_plusminus, WAR])
 
 
 def sort_by_last_name(fileName): #Assumes a column contains names
@@ -52,8 +55,11 @@ def sort_by_last_name(fileName): #Assumes a column contains names
 
 
 def main():
-    get_preseason_RAPTOR()
-    sort_by_last_name(fileName)
+    answer = input("Reset existing file? y/n")
+    if answer == 'y':
+        get_preseason_RAPTOR()
+    else:
+        pass
 
 if __name__ == '__main__':
     main()

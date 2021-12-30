@@ -8,11 +8,15 @@ from datetime import datetime
 shortDate = datetime.today().strftime('%Y-%m-%d')
 # shortDate_nodash = shortDate.replace("-","")
 dir = ("C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/dailyRAPTOR")
-fileName = f'{dir}/RAPTORratings_{shortDate}.csv'
+destFileName = f'{dir}/RAPTORratings_{shortDate}.csv'
 
-def current_RAPTOR_by_team():
-    reset_csv(fileName)
-    write_to_csv(fileName, ['Name', 'Current Offensive +/-', 'Current Defensive +/-'])
+def current_RAPTOR_by_team(fileName):
+    try:
+        reset_csv(fileName)
+    except FileNotFoundError:
+        pass
+
+    write_to_csv(fileName, ['Name', 'CurrOff', 'CurrDef'])
     options = webdriver.ChromeOptions()
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(executable_path = 'C:/Users/Roger/Documents/env/chromedriver_win32/chromedriver.exe', options=options)
@@ -40,25 +44,24 @@ def current_RAPTOR_by_team():
     combine_with_preseason(fileName)
 
 #could make argument date if necessary
-def combine_with_preseason():
+def combine_with_preseason(fileName):
     dataPath = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data'
     preseason_file = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/RAPTOR_preseason_predictions_2022.csv'
     df_preseason = pd.read_csv(preseason_file)
 
-    df_curr = pd.read_csv(fileName)
+    df_curr = pd.read_csv(fileName) # Local/global variable being fileName is kind of awkward
 
     df_full = df_curr.merge(df_preseason, how = 'outer', on = 'Name', sort = True)
     df_full.to_csv(f'{dataPath}/dailyRAPTOR/fullRAPTOR_{shortDate}.csv', index = False)
 
 
-def sort_by_last_name(): #Assumes a column contains names
+def sort_by_last_name(fileName): #Assumes a column contains names
     df = pd.read_csv(fileName, engine = 'python')
     df.sort_values(by='Name', ascending = True, inplace = True)
     df.to_csv(fileName, index = False)
 
 def main():    
-    combine_with_preseason()
-    #current_RAPTOR_by_team()
+    current_RAPTOR_by_team(destFileName)
 
 if __name__ == '__main__':
     main()
