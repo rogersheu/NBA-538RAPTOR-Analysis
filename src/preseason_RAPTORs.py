@@ -8,12 +8,8 @@ from datetime import datetime
 fileName = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/RAPTOR_preseason_predictions_2022.csv'
 shortDate = datetime.today().strftime('%Y-%m-%d')
 
-def get_preseason_RAPTOR():
-    # try:
-    #     reset_csv(fileName)
-    # except FileNotFoundError:
-    #     pass
-    #write_to_csv(fileName, ['Name', 'PreOff','PreDef','PreTot','PreWAR'])
+def get_preseason_RAPTOR(reset = False):
+
     df = pd.read_csv(f"C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/dailyRAPTOR/RAPTORratings_{shortDate}.csv", engine = 'python')
     playerNames = list(df['Name'])
 
@@ -21,14 +17,22 @@ def get_preseason_RAPTOR():
     existing_df = pd.read_csv(fileName, engine = 'python')
     existing_names = list(existing_df['Name'])
 
-    for name in playerNames:
-        if name in existing_names:
-            continue
-        else:
-            try:
-                get_player_stats(name)
-            except Exception:
+    if reset is True:
+        reset_csv(fileName)
+        write_to_csv(fileName, ['Name', 'PreOff','PreDef','PreTot','PreWAR'])
+
+        for name in playerNames:
+            get_player_stats(name)
+
+    else:
+        for name in playerNames:
+            if name in existing_names:
                 continue
+            else:
+                try:
+                    get_player_stats(name)
+                except Exception:
+                    continue
     
     sort_by_last_name(fileName)
 
@@ -55,11 +59,14 @@ def sort_by_last_name(fileName): #Assumes a column contains names
 
 
 def main():
-    answer = input("Reset existing file? y/n")
+    answer = input("Reset existing file? y/n\n")
     if answer == 'y':
-        get_preseason_RAPTOR()
+        get_preseason_RAPTOR(reset=True)
+    elif answer == 'n':
+        get_preseason_RAPTOR(reset=False)
     else:
-        pass
+        print("Invalid input.")
+        return False
 
 if __name__ == '__main__':
     main()
