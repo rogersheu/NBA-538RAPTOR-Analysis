@@ -4,6 +4,9 @@ from csv_functions import *
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from datetime import datetime
+from thefuzz import fuzz
+from thefuzz import process
+import inconsistent_names
 
 fileName = 'C:/Users/Roger/Documents/GitHub/RAPTOR-Delta/data/RAPTOR_preseason_predictions_2022.csv'
 shortDate = datetime.today().strftime('%Y-%m-%d')
@@ -30,6 +33,8 @@ def get_preseason_RAPTOR(reset = False):
                 continue
             else:
                 try:
+                    if name in inconsistent_names.keys():
+                        name = inconsistent_names.name_dict[name]
                     get_player_stats(name)
                 except Exception:
                     continue
