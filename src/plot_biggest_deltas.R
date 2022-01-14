@@ -2,9 +2,18 @@ library(ggplot2)
 library(ggrepel)
 library(lubridate)
 
-plot_biggest_deltas <- function() {
-  today <- Sys.Date()
-  alldata <- read.csv(paste("~/GitHub/RAPTOR-Delta/data/dailyRAPTOR/fullRAPTOR_", today, ".csv", sep=""))
+#### Write code to get players and team codes.
+
+# today <- Sys.Date()
+# date <- today
+
+plot_biggest_deltas <- function(date) { # date in the form "YYYY-MM-DD"
+  year <- substr(as_date(date), 1, 4)
+  month <- substr(as_date(date), 6, 7)
+  day <- substr(as_date(date), 9, 10)
+  date_nodash <- paste(year, month, day, sep="")
+  # date_dash <- paste(year, month, day, sep="-")
+  alldata <- read.csv(paste("~/GitHub/RAPTOR-Delta/data/dailyRAPTOR/fullRAPTOR_", date, ".csv", sep=""))
   posdelta <- alldata[alldata$DiffTot > 2,]
   negdelta <- alldata[alldata$DiffTot < -1.5,]
   
@@ -126,15 +135,8 @@ plot_biggest_deltas <- function() {
   
   neg_delta_plot
   
-  today <- Sys.Date()
-  year <- toString(year(today))
-  month <- toString(month(today))
-  day <- toString(day(today))
-  date <- paste(year, month, day, sep="")
-  date_dash <- paste(year, month, day, sep="-")
-  
   ggsave(
-    filename = paste("Biggest RAPTOR Increases (as of ", date_dash , "), before and after.png", sep=""),
+    filename = paste("Biggest RAPTOR Increases (as of ", date, "), before and after.png", sep=""),
     plot = pos_plot,
     device = "png",
     path = "~/GitHub/RAPTOR-Delta/graphs/",
@@ -145,7 +147,7 @@ plot_biggest_deltas <- function() {
   )
   
   ggsave(
-    filename = paste("Biggest RAPTOR Decreases (as of ", date_dash , "), before and after.png", sep=""),
+    filename = paste("Biggest RAPTOR Decreases (as of ", date, "), before and after.png", sep=""),
     plot = neg_plot,
     device = "png",
     path = "~/GitHub/RAPTOR-Delta/graphs/",
@@ -156,7 +158,7 @@ plot_biggest_deltas <- function() {
   )
   
   ggsave(
-    filename = paste("Biggest RAPTOR Increases (as of ", date_dash , "), delta.png", sep=""),
+    filename = paste("Biggest RAPTOR Increases (as of ", date, "), delta.png", sep=""),
     plot = pos_delta_plot,
     device = "png",
     path = "~/GitHub/RAPTOR-Delta/graphs/",
@@ -167,7 +169,7 @@ plot_biggest_deltas <- function() {
   )
   
   ggsave(
-    filename = paste("Biggest RAPTOR Decreases (as of ", date_dash , "), delta.png", sep=""),
+    filename = paste("Biggest RAPTOR Decreases (as of ", date, "), delta.png", sep=""),
     plot = neg_delta_plot,
     device = "png",
     path = "~/GitHub/RAPTOR-Delta/graphs/",
