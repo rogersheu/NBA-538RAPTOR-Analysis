@@ -65,7 +65,7 @@ def active_scraper():
     dataList = dataList[0]
 
     for player in dataList:
-        print(player)
+        # print(player)
         playerMatch = re.match(player_regex, player)
         name, team, position, MP = playerMatch.group(1, 2, 3, 4)
         boxOFF, boxDEF, boxTOT = playerMatch.group(5, 6, 7)

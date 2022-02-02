@@ -14,9 +14,14 @@ plot_biggest_deltas <- function(date) { # date in the form "YYYY-MM-DD"
   date_nodash <- paste(year, month, day, sep="")
   # date_dash <- paste(year, month, day, sep="-")
   alldata <- read.csv(paste("~/GitHub/RAPTOR-Delta/data/dailyRAPTOR/fullRAPTOR_", date, ".csv", sep=""))
-  posdelta <- alldata[alldata$DiffTot > 2,]
-  negdelta <- alldata[alldata$DiffTot < -1.5,]
+  alldata$DiffTot <- round((alldata$CurrOff + alldata$CurrDef) - (alldata$PreOff + alldata$PreDef),1)
+  alldata$DiffOff <- round((alldata$CurrOff) - (alldata$PreOff),1)
+  alldata$DiffDef <- round((alldata$CurrDef) - (alldata$PreDef),1)
   
+  posdelta <- alldata[alldata$DiffTot > 2,]
+  posdelta <- posdelta[!is.na(posdelta$DiffTot),]
+  negdelta <- alldata[alldata$DiffTot < -1.75,]
+  negdelta <- negdelta[!is.na(negdelta$DiffTot),]
   
   pos_pre <- posdelta[c("Name", "PreOff", "PreDef")]
   pos_curr <- posdelta[c("Name", "CurrOff", "CurrDef")]
@@ -82,7 +87,7 @@ plot_biggest_deltas <- function(date) { # date in the form "YYYY-MM-DD"
   neg_plot
   
   
-  pos_delta_plot <- ggplot(data = posdelta, aes(x = DiffOff, y = DiffDef)) + 
+  pos_delta_plot <- ggplot(data = posdelta, aes(x = DiffOff, y = DiffDef)) +
     theme_bw() + 
     ggtitle("RAPTOR Rating: Biggest Increases") + 
     theme(axis.title=element_text(size=14)) + 
@@ -103,14 +108,14 @@ plot_biggest_deltas <- function(date) { # date in the form "YYYY-MM-DD"
                                       DiffDef,
                                       ")"
                                       , sep="")),
-                        color = posdelta$Color) +
+                        color = posdelta$Color, fontface = "bold") +
     geom_point(aes(x = DiffOff, y = DiffDef), color = posdelta$Color, size = 2)
   
   pos_delta_plot
   
   neg_delta_plot <- ggplot(data = negdelta, aes(x = DiffOff, y = DiffDef)) + 
     theme_bw() + 
-    ggtitle("RAPTOR Rating: Biggest Increases") + 
+    ggtitle("RAPTOR Rating: Biggest Decreases") + 
     theme(axis.title=element_text(size=14)) + 
     theme(axis.text=element_text(size=12)) +
     xlab("RAPTOR OPM Difference") +
@@ -129,7 +134,7 @@ plot_biggest_deltas <- function(date) { # date in the form "YYYY-MM-DD"
                                       DiffDef,
                                       ")"
                                       , sep="")),
-                    color = negdelta$Color) +
+                    color = negdelta$Color, fontface = "bold") +
   geom_point(aes(x = DiffOff, y = DiffDef), color = negdelta$Color, size = 2)
 
   
